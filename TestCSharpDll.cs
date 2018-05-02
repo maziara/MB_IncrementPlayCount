@@ -15,13 +15,13 @@ namespace MusicBeePlugin
         {
             mbApiInterface = new MusicBeeApiInterface();
             mbApiInterface.Initialise(apiInterfacePtr);
-            EventHandler MyCommand_Event = new EventHandler(MyCommand);
-            mbApiInterface.MB_RegisterCommand("MyCommand",MyCommand_Event);
-            mbApiInterface.MB_AddMenuItem("mnuTools/MyCommand2", "", MyCommand_Event);
+            EventHandler IncrementPlayCount_Event = new EventHandler(IncrementPlayCount);
+            mbApiInterface.MB_RegisterCommand("Tools: Increment PlayCount", IncrementPlayCount_Event);
+            mbApiInterface.MB_AddMenuItem("mnuTools/Increment PlayCount", null, IncrementPlayCount_Event);
             about.PluginInfoVersion = PluginInfoVersion;
-            about.Name = "Plugin Name";
-            about.Description = "A brief description of what this plugin does";
-            about.Author = "Author";
+            about.Name = "Increment PlayCount";
+            about.Description = "This plugin increments the PlayCount for the selected tracks.";
+            about.Author = "maziara";
             about.TargetApplication = "";   // current only applies to artwork, lyrics or instant messenger name that appears in the provider drop down selector or target Instant Messenger
             about.Type = PluginType.General;
             about.VersionMajor = 1;  // your plugin version
@@ -52,12 +52,25 @@ namespace MusicBeePlugin
                 textBox.Bounds = new Rectangle(60, 0, 100, textBox.Height);
                 configPanel.Controls.AddRange(new Control[] { prompt, textBox });
             }
+            //mbApiInterface.MB_AddPanel();
+            Form control = new Form();
+            control.Show(); 
+            
             return false;
         }
 
-        public void MyCommand(object sender, EventArgs e)
+        public void IncrementPlayCount(object sender, EventArgs e)
         {
-            //mbApiInterface.
+            string[] mySelectedFiles = new string[] { };
+            mbApiInterface.Library_QueryFilesEx("domain=SelectedFiles", ref mySelectedFiles);
+            foreach (string myfile in mySelectedFiles)
+            {
+                string currentValue = mbApiInterface.Library_GetFileTag(myfile, (MetaDataType)FilePropertyType.PlayCount);
+                int newValue = Int32.Parse(currentValue) + 1;
+                mbApiInterface.Library_SetFileTag(myfile, (MetaDataType)FilePropertyType.PlayCount, newValue.ToString());
+                mbApiInterface.Library_CommitTagsToFile(myfile);
+            }
+            mbApiInterface.MB_RefreshPanels();
         }
        
         // called by MusicBee when the user clicks Apply or Save in the MusicBee Preferences screen.
