@@ -18,6 +18,8 @@ namespace MusicBeePlugin
             EventHandler IncrementPlayCount_Event = new EventHandler(IncrementPlayCount);
             mbApiInterface.MB_RegisterCommand("Tools: Increment PlayCount", IncrementPlayCount_Event);
             mbApiInterface.MB_AddMenuItem("mnuTools/Increment PlayCount", null, IncrementPlayCount_Event);
+            //ToolStripMenuItem contextMenu = (ToolStripMenuItem)mbApiInterface.MB_AddMenuItem("context.Main/Increment PlayCount", null, IncrementPlayCount_Event);
+            //contextMenu.DropDown.Items.Add("Increment PlayCount", null, IncrementPlayCount_Event);
             about.PluginInfoVersion = PluginInfoVersion;
             about.Name = "Increment PlayCount";
             about.Description = "This plugin increments the PlayCount for the selected tracks.";
